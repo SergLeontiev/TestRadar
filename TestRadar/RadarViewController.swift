@@ -14,14 +14,13 @@ class RadarViewController: UIViewController {
     }
     
     func drawCircle(radius: CGFloat) {
-        let centerScreen = CGPoint(x: widthScreen / 2, y: heightScreen / 2)
         let circlePath = UIBezierPath(arcCenter: centerScreen, radius: radius, startAngle: CGFloat(0), endAngle: CGFloat(Double.pi * 2), clockwise: true)
         
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = circlePath.cgPath
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.strokeColor = UIColor.gray.cgColor
-        
+
         view.layer.addSublayer(shapeLayer)
     }
 
