@@ -7,10 +7,12 @@ class RadarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        radius = (widthScreen - 20) / CGFloat(2) / CGFloat(numberCircles)
+        radius = maxRadius / CGFloat(numberCircles)
         for i in 1...numberCircles {
             drawCircle(radius: radius * CGFloat(i))
         }
+        
+        insertPlane()
     }
     
     func drawCircle(radius: CGFloat) {
@@ -21,7 +23,20 @@ class RadarViewController: UIViewController {
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.strokeColor = UIColor.gray.cgColor
 
-        view.layer.addSublayer(shapeLayer)
+        self.view.layer.addSublayer(shapeLayer)
+    }
+
+    func insertPlane() {
+        let randomX = CGFloat.random(in: (centerX - maxRadius)...(centerX + maxRadius))
+        let randomY = CGFloat.random(in: (centerY - maxRadius)...(centerY + maxRadius))
+        
+        let planeImage = UIImage(named: "plane")!.cgImage
+
+        let shapeLayer = CALayer()
+        shapeLayer.frame = CGRect(x: randomX, y: randomY, width: radius, height: radius)
+        shapeLayer.contents = planeImage
+        
+        self.view.layer.addSublayer(shapeLayer)
     }
 
 }
