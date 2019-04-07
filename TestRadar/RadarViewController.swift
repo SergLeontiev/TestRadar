@@ -49,7 +49,7 @@ class RadarViewController: UIViewController {
         let randomX = CGFloat.random(in: (centerX - maxRadius)...(centerX + maxRadius))
         let randomY = CGFloat.random(in: (centerY - maxRadius)...(centerY + maxRadius))
 
-        let points = [
+        let rectPoints = [
             CGPoint(x: randomX, y: randomY),
             CGPoint(x: randomX + sideRect, y: randomY),
             CGPoint(x: randomX, y: randomY + sideRect),
@@ -58,8 +58,8 @@ class RadarViewController: UIViewController {
         
         for i in 0..<circlesRadius.count - 1 {
             var countHitsPoints = 0
-            for point in points {
-                if check(point: point, radusMin: circlesRadius[i], radiusMax: circlesRadius[i + 1]) {
+            for point in rectPoints {
+                if isPointInRing(point: point, radusMin: circlesRadius[i], radiusMax: circlesRadius[i + 1]) {
                     countHitsPoints += 1
                 }
             }
@@ -71,7 +71,7 @@ class RadarViewController: UIViewController {
         return randomRectPlane()
     }
 
-    func check(point: CGPoint, radusMin: CGFloat, radiusMax: CGFloat) -> Bool {
+    func isPointInRing(point: CGPoint, radusMin: CGFloat, radiusMax: CGFloat) -> Bool {
         let halfCircleEquation = pow(Double(point.x - centerX), 2) + pow(Double(point.y - centerY), 2)
         
         return halfCircleEquation > pow(Double(radusMin), 2) && halfCircleEquation < pow(Double(radiusMax), 2)
