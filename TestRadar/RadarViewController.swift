@@ -10,7 +10,7 @@ class RadarViewController: UIViewController {
         super.viewDidLoad()
         
         stepCircles = maxRadius / CGFloat(numberCircles)
-        sideRect = stepCircles / sqrt(4)
+        sideRect = stepCircles / 2
 
         for i in 1...numberCircles {
             let currentRadius = stepCircles * CGFloat(i)
@@ -63,7 +63,7 @@ class RadarViewController: UIViewController {
                     countHitsPoints += 1
                 }
             }
-            if countHitsPoints == 4 {
+            if countHitsPoints == rectPoints.count {
                 return CGRect(x: randomX, y: randomY, width: sideRect, height: sideRect)
             }
         }
@@ -74,7 +74,7 @@ class RadarViewController: UIViewController {
     func isPointInRing(point: CGPoint, radusMin: CGFloat, radiusMax: CGFloat) -> Bool {
         let halfCircleEquation = pow(Double(point.x - centerX), 2) + pow(Double(point.y - centerY), 2)
         
-        return halfCircleEquation > pow(Double(radusMin), 2) && halfCircleEquation < pow(Double(radiusMax), 2)
+        return sqrt(halfCircleEquation) > Double(radusMin) && sqrt(halfCircleEquation) < Double(radiusMax)
     }
 
 }
