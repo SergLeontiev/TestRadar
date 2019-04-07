@@ -3,22 +3,22 @@ import UIKit
 class RadarViewController: UIViewController {
 
     var stepCircles = CGFloat()
-    var circlesRadius: [CGFloat] = []
+    var circlesRadius = [CGFloat()]
     var sideRect = CGFloat()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         stepCircles = maxRadius / CGFloat(numberCircles)
-        sideRect = stepCircles / sqrt(2)
-        
+        sideRect = stepCircles / sqrt(4)
+
         for i in 1...numberCircles {
             let currentRadius = stepCircles * CGFloat(i)
             drawCircle(radius: currentRadius)
             circlesRadius.append(currentRadius)
         }
 
-        for _ in 1...numberPlanes {
+        for _ in 0..<numberPlanes {
             insertPlane()
         }
     }
@@ -56,15 +56,14 @@ class RadarViewController: UIViewController {
             CGPoint(x: randomX + sideRect, y: randomY + sideRect)
         ]
         
-        var k = 0
-        for i in stride(from: 0, to: circlesRadius.count - 1, by: 2) {
-            k = 0
+        for i in 0..<circlesRadius.count - 1 {
+            var countHitsPoints = 0
             for point in points {
                 if check(point: point, radusMin: circlesRadius[i], radiusMax: circlesRadius[i + 1]) {
-                    k += 1
+                    countHitsPoints += 1
                 }
             }
-            if k == 4 {
+            if countHitsPoints == 4 {
                 return CGRect(x: randomX, y: randomY, width: sideRect, height: sideRect)
             }
         }
@@ -73,9 +72,9 @@ class RadarViewController: UIViewController {
     }
 
     func check(point: CGPoint, radusMin: CGFloat, radiusMax: CGFloat) -> Bool {
-        let kek = pow(Double(point.x - centerX), 2) + pow(Double(point.y - centerY), 2)
+        let halfCircleEquation = pow(Double(point.x - centerX), 2) + pow(Double(point.y - centerY), 2)
         
-        return kek > pow(Double(radusMin), 2) && kek < pow(Double(radiusMax), 2)
+        return halfCircleEquation > pow(Double(radusMin), 2) && halfCircleEquation < pow(Double(radiusMax), 2)
     }
 
 }

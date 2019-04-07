@@ -1,7 +1,7 @@
 import UIKit
 
 let numberCircles = 10
-let numberPlanes = 50
+let numberPlanes = 40
 
 let widthScreen = UIScreen.main.bounds.width
 let heightScreen = UIScreen.main.bounds.height
