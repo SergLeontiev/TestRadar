@@ -2,20 +2,20 @@ import UIKit
 
 class RadarViewController: UIViewController {
 
-    var stepCircles = CGFloat()
-    var circlesRadius = [CGFloat()]
-    var sideRect = CGFloat()
+    var stepCircles: CGFloat {
+        return maxRadius / CGFloat(numberCircles)
+    }
+    var sideRectPlane: CGFloat {
+        return stepCircles / sqrt(2)
+    }
+    var circleRadiuses: [CGFloat] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        stepCircles = maxRadius / CGFloat(numberCircles)
-        sideRect = stepCircles / 2
-
-        for i in 1...numberCircles {
-            let currentRadius = stepCircles * CGFloat(i)
-            drawCircle(radius: currentRadius)
-            circlesRadius.append(currentRadius)
+        for radius in stride(from: stepCircles, to: maxRadius, by: stepCircles) {
+            drawCircle(radius: radius)
+            circleRadiuses.append(radius)
         }
 
         for _ in 0..<numberPlanes {
@@ -24,7 +24,13 @@ class RadarViewController: UIViewController {
     }
     
     func drawCircle(radius: CGFloat) {
-        let circlePath = UIBezierPath(arcCenter: centerScreen, radius: radius, startAngle: CGFloat(0), endAngle: CGFloat(Double.pi * 2), clockwise: true)
+        let circlePath = UIBezierPath(
+            arcCenter: centerScreen,
+            radius: radius,
+            startAngle: 0,
+            endAngle: .pi * 2,
+            clockwise: true
+        )
 
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = circlePath.cgPath
@@ -35,9 +41,9 @@ class RadarViewController: UIViewController {
     }
 
     func insertPlane() {
-        let rectPlane = randomRectPlane()
-        let planeImage = UIImage(named: "plane")!.cgImage
+        guard let planeImage = UIImage(named: "plane")?.cgImage else { return }
         
+        let rectPlane = randomRectPlane()
         let shapeLayer = CALayer()
         shapeLayer.frame = rectPlane
         shapeLayer.contents = planeImage
@@ -46,35 +52,19 @@ class RadarViewController: UIViewController {
     }
     
     func randomRectPlane() -> CGRect {
-        let randomX = CGFloat.random(in: (centerX - maxRadius)...(centerX + maxRadius))
-        let randomY = CGFloat.random(in: (centerY - maxRadius)...(centerY + maxRadius))
-
-        let rectPoints = [
-            CGPoint(x: randomX, y: randomY),
-            CGPoint(x: randomX + sideRect, y: randomY),
-            CGPoint(x: randomX, y: randomY + sideRect),
-            CGPoint(x: randomX + sideRect, y: randomY + sideRect)
-        ]
+        let randomRadius = circleRadiuses.randomElement()! - stepCircles / 2
+        let randomAngle = Double.random(in: 0...360)
         
-        for i in 0..<circlesRadius.count - 1 {
-            var countHitsPoints = 0
-            for point in rectPoints {
-                if isPointInRing(point: point, radusMin: circlesRadius[i], radiusMax: circlesRadius[i + 1]) {
-                    countHitsPoints += 1
-                }
-            }
-            if countHitsPoints == rectPoints.count {
-                return CGRect(x: randomX, y: randomY, width: sideRect, height: sideRect)
-            }
-        }
+        let sizePlane = CGSize(width: sideRectPlane, height: sideRectPlane)
+        var originPointPlane = convertPolarToCartesian(radius: Double(randomRadius), angle: randomAngle)
+        originPointPlane.x += centerX - sideRectPlane / 2
+        originPointPlane.y += centerY - sideRectPlane / 2
         
-        return randomRectPlane()
+        return CGRect(origin: originPointPlane, size: sizePlane)
     }
 
-    func isPointInRing(point: CGPoint, radusMin: CGFloat, radiusMax: CGFloat) -> Bool {
-        let halfCircleEquation = pow(Double(point.x - centerX), 2) + pow(Double(point.y - centerY), 2)
-        
-        return sqrt(halfCircleEquation) > Double(radusMin) && sqrt(halfCircleEquation) < Double(radiusMax)
+    func convertPolarToCartesian(radius: Double, angle: Double) -> CGPoint {
+        return CGPoint(x: radius * __cospi(angle / 180), y: radius * __sinpi(angle / 180))
     }
 
 }
